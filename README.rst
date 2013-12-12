@@ -21,3 +21,9 @@ and ``--trim`` parameter.
 ::
 
    compiler.py --directory tmpl/ --output templates.tmpl --trim --newline
+
+Minifying a set of specific files can be done with the ``--file`` option.
+::
+
+  compiler.py --file MyTemplate1.tmpl --file subdir/MyTemplate2.tmpl --output templates.tmpl --trim --newline
+
