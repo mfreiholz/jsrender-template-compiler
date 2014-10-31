@@ -28,8 +28,8 @@ def main():
     outputFile = None
     try:
         outputFile = open(args.outputfile, "w+")
-    except IOError as (errno, errmsg):
-        sys.stderr.write("Can not open output file (%d %s) => %s\n" % (errno, errmsg, args.outputfile))
+    except IOError as e:
+        sys.stderr.write("Can not open output file (%d %s) => %s\n" % (e.errno, e.errmsg, args.outputfile))
         return None
     gFilePathExcludeSet.add(os.path.abspath(args.outputfile))
     
@@ -37,10 +37,10 @@ def main():
     tmplFileSizeSum = 0.0
     for parentPath, fileName in walkGen(args.directory, args.directoryFilePattern, args.file):
         path = os.path.join(parentPath, fileName)
-        if path in gFilePathExcludeSet:
+        if os.path.abspath(path) in gFilePathExcludeSet:
             continue
         try:
-            print "Processing template => %s" % path
+            print ("Processing template => %s" % (path))
             f = open(path)
             for lineData in f:
                 lineBreak = False
@@ -53,8 +53,8 @@ def main():
                     outputFile.write("\n")
             tmplFileSizeSum += f.tell()
             f.close()
-        except IOError as (errno, errmsg):
-            sys.stderr.write("Can not open template file (%d %s) => %s\n" % (errno, errmsg, path))
+        except IOError as e:
+            sys.stderr.write("Can not open template file (%d %s) => %s\n" % (e.errno, e.errmsg, path))
             
     # Cleanup
     outputFile.close()
@@ -62,7 +62,7 @@ def main():
     # Print statistics.
     outputFileSize = float(os.stat(args.outputfile).st_size)
     savesInPerCent = (100 / tmplFileSizeSum) * outputFileSize
-    print "Minified templates from %d bytes to %d bytes (%d%% of the original templates)." % (tmplFileSizeSum, outputFileSize, savesInPerCent)
+    print ("Minified templates from %d bytes to %d bytes (%d%% of the original templates)." % (tmplFileSizeSum, outputFileSize, savesInPerCent))
 
 
 def walkGen(baseDirectoryPath, fileMatchExpression, fileList):
